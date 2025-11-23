@@ -1,99 +1,117 @@
 # Plan naprawy pluginu project-starter
-Data: 2025-11-21
+Data rozpoczęcia: 2025-11-21
+Data zakończenia: 2025-11-23
 
-## Problem
-Plugin `project-starter` nie ładuje komendy `/start` mimo poprawnej struktury.
-Komenda `/project-starter:start` zwraca błąd "Unknown slash command".
+## ✅ MIGRATION COMPLETED SUCCESSFULLY
 
-## Przyczyna
-Claude Code v2.0.49 nie ładuje komend z lokalnego marketplace `local-plugins`.
-Tylko oficjalne marketplaces działają poprawnie.
+Plugin `project-starter` został pomyślnie przeniesiony do nowego marketplace i działa poprawnie.
 
-## Rozwiązanie - Do wykonania
+---
 
-### Opcja A: Stwórz własne repozytorium Git (ZALECANE)
+## Problem (ROZWIĄZANY)
+Plugin `project-starter` nie ładował komendy `/start` mimo poprawnej struktury.
+Komenda `/project-starter:start` zwracała błąd "Unknown slash command".
 
-1. **Stwórz nowe repo na GitHub:**
-   ```
-   kamil-plugins/ (lub inna nazwa)
-   ├── .claude-plugin/
-   │   └── marketplace.json
-   └── plugins/
-       └── project-starter/
-           ├── .claude-plugin/
-           │   └── plugin.json
-           ├── commands/
-           │   └── start.md
-           └── README.md
-   ```
+## Przyczyna (ZIDENTYFIKOWANA)
+Claude Code v2.0.49 nie ładuje komend z lokalnego marketplace `local-plugins` który nie był Git repository.
+Tylko marketplace z Git version control działają poprawnie.
 
-2. **Zawartość marketplace.json:**
+## Rozwiązanie (ZAIMPLEMENTOWANE) ✅
+
+### Wykonane kroki:
+
+1. ✅ **Utworzono nowy marketplace w Git:**
+   - Lokalizacja: `/Users/kamil/Projects/Claude Plugins/`
+   - Struktura zgodna ze standardami Anthropic
+   - Git repository zainicjalizowane
+
+2. ✅ **Poprawiono plugin.json:**
+   - Zmieniono `author` ze string na obiekt `{name, email}`
+   - Format zgodny z schema Anthropic
+
+3. ✅ **Utworzono marketplace.json:**
    ```json
    {
+     "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
      "name": "kamil-plugins",
+     "version": "1.0.0",
      "owner": {
        "name": "Kamil Grabowski",
        "email": "kamil@royalco.io"
      },
-     "plugins": [
-       {
-         "name": "project-starter",
-         "source": "./plugins/project-starter",
-         "description": "Tools for starting project sessions"
-       }
-     ]
+     "plugins": [...]
    }
    ```
 
-3. **Push do GitHub:**
+4. ✅ **Przeniesiono plugin:**
+   - Skopiowano z: `/Users/kamil/.claude/plugins/marketplaces/local-plugins/project-starter/`
+   - Do: `~/Projects/Claude Plugins/plugins/project-starter/`
+
+5. ✅ **Git commits:**
+   - Initial commit: `52a4093` - Marketplace setup
+   - Revert commit: `a4844e2` - Restored inline bash execution
+
+6. ✅ **Instalacja:**
    ```bash
-   git init
-   git add .
-   git commit -m "Add project-starter plugin"
-   git push
-   ```
-
-4. **Dodaj marketplace w Claude Code:**
-   ```
-   /plugin marketplace add https://github.com/kamilgrabowski/kamil-plugins
-   ```
-
-5. **Zainstaluj plugin:**
-   ```
-   /plugin install project-starter@kamil-plugins
-   ```
-
-### Opcja B: Przenieś do istniejącego marketplace (SZYBSZE)
-
-1. **Skopiuj plugin:**
-   ```bash
-   cp -r /Users/kamil/.claude/plugins/marketplaces/local-plugins/project-starter \
-         /Users/kamil/.claude/plugins/marketplaces/claude-code-plugins/plugins/
-   ```
-
-2. **Usuń stary plugin:**
-   ```bash
-   rm -rf /Users/kamil/.claude/plugins/marketplaces/local-plugins/project-starter
-   ```
-
-3. **W Claude Code:**
-   ```
    /plugin uninstall project-starter@local-plugins
-   /plugin install project-starter@claude-code-plugins
+   /plugin marketplace add ~/Projects/Claude Plugins
+   /plugin install project-starter@kamil-plugins
+   /plugin update project-starter@kamil-plugins
    ```
 
-4. **Restart Claude Code**
+7. ✅ **Cleanup:**
+   - Usunięto wpisy z `settings.json`
+   - Usunięto wpisy z `installed_plugins.json`
+   - Katalog `local-plugins/` został usunięty
 
-## Weryfikacja
-Po restarcie sprawdź:
-- `/help` - czy widać komendę
-- `/project-starter:start` - czy działa
+## Weryfikacja ✅
 
-## Pliki do zachowania
-- `/Users/kamil/.claude/plugins/marketplaces/local-plugins/project-starter/` - cały folder pluginu
-- Struktura jest POPRAWNA, problem tylko z marketplace
+- ✅ `/help` - komenda widoczna
+- ✅ `/project-starter:start` - działa poprawnie
+- ✅ Inline bash execution działa po approval permissions
+- ✅ Plugin ładuje CLAUDE.md, README.md, TODO.md
+- ✅ Git tracking: `gitCommitSha: a4844e2...`
 
-## Notatki
-- Plugin ma poprawną strukturę
-- Problem jest tylko z local-plugins marketplace
-- Wszystkie pluginy z claude-code-plugins działają poprawnie
+## Struktura finalna
+
+```
+/Users/kamil/Projects/Claude Plugins/
+├── .git/                          # Git repository
+├── .claude-plugin/
+│   └── marketplace.json           # Manifest marketplace
+├── plugins/
+│   └── project-starter/
+│       ├── .claude-plugin/
+│       │   └── plugin.json        # Fixed author field
+│       ├── commands/
+│       │   └── start.md           # Komenda /start
+│       └── README.md
+├── docs/
+│   ├── migration-context.md       # Kontekst migracji
+│   └── migration-todo.md          # Ten plik
+├── .gitignore
+└── README.md
+```
+
+## Kluczowe wnioski
+
+1. **Git repository jest wymagane** - Claude Code wymaga Git tracking dla marketplaces
+2. **Author jako obiekt** - plugin.json musi mieć `author: {name, email}`
+3. **Update > Uninstall/Install** - szybsze i łatwiejsze
+4. **Inline bash działa** - po zatwierdzeniu permissions
+5. **Local development** - można rozwijać wtyczki lokalnie z pełnym Git workflow
+
+## Następne kroki (opcjonalne)
+
+- [ ] Push marketplace do GitHub (dla backup)
+- [ ] Dodać kolejne wtyczki do marketplace
+- [ ] Eksperymentować z MCP servers
+- [ ] Dodać testy dla wtyczek
+
+---
+
+**Status:** ✅ COMPLETED
+**Marketplace:** kamil-plugins
+**Plugin location:** ~/Projects/Claude Plugins/plugins/project-starter/
+**Git commits:** 3 (initial, fix, revert)
+**Working:** YES
