@@ -1,6 +1,6 @@
 # Project Starter Plugin
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Author:** Kamil Grabowski
 
 Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps.
@@ -91,6 +91,73 @@ To use in other projects or share with team, add to `.claude/settings.json`:
    - Provides next steps
    - Offers to create session todos
 
+### `/project-starter:end`
+
+**Description:** End project session - save notes, update TODOs, prepare for next time
+
+**Usage:**
+```bash
+/project-starter:end
+```
+
+**What it does:**
+
+1. **Analyzes session activity**:
+   - Checks git diff for modified files
+   - Shows summary of changes (insertions/deletions)
+   - Identifies uncommitted changes
+
+2. **Presents session summary**:
+   - Lists files changed during session
+   - Shows current TODO.md status
+   - Displays git statistics
+
+3. **Updates TODO.md** (interactive):
+   - Asks which tasks were completed
+   - Moves completed tasks from TODO/IN-PROGRESS to DONE section
+   - Adds completion dates to finished tasks
+   - Optionally adds notes to in-progress tasks
+
+4. **Saves session notes** (interactive):
+   - Creates/updates `.claude/session-notes.md`
+   - Captures what was accomplished
+   - Records blockers and issues
+   - Documents next steps for future session
+
+5. **Suggests next session start**:
+   - Recommends which task to start with next time
+   - Based on IN-PROGRESS and TODO tasks
+
+6. **Shows final summary**:
+   - What was saved (TODO updates, session notes)
+   - Current task counts
+   - Next suggested action
+   - Git status reminder
+
+**Example workflow:**
+```
+★ Session Summary ─────────────────────────────
+PROJECT: marketplace-platform
+
+SESSION ACTIVITY:
+- Modified files: 5 files
+- Git changes: 127 insertions(+), 43 deletions(-)
+
+FILES CHANGED:
+- src/auth/middleware.ts
+- src/api/payments.ts
+- tests/auth.test.ts
+
+Which tasks did you complete? [Interactive selection...]
+
+✓ Updated TODO.md: moved 2 tasks to DONE
+✓ Session notes saved to .claude/session-notes.md
+
+NEXT SESSION:
+→ Continue with: Write API documentation
+─────────────────────────────────────────────────
+```
+
 ## Example Output
 
 ```
@@ -125,8 +192,15 @@ What would you like to work on today?
 
 ## Features
 
-### ✅ Current Features (v1.0.0)
+### ✅ Current Features
 
+**v1.1.0:**
+- Session end workflow with TODO.md auto-update
+- Session notes saving for continuity between sessions
+- Git activity analysis and summary
+- Next session task suggestions
+
+**v1.0.0:**
 - Intelligent project detection and context loading
 - Interactive file creation proposals
 - Task status tracking and analysis
@@ -141,8 +215,7 @@ What would you like to work on today?
 Easily extendable with additional commands:
 
 - `/project-starter:quick` - Fast start without questions
-- `/project-starter:deep` - Include memory search and git history
-- `/project-starter:end` - End session and save notes
+- `/project-starter:deep` - Include memory search and git history automatically
 - `/project-starter:status` - Show status without loading full context
 
 Additional features:
@@ -215,5 +288,5 @@ For issues or questions, contact: kamil@royalco.io
 
 ---
 
-**Last updated:** 2025-11-21
-**Plugin location:** `~/.claude/plugins/project-starter/`
+**Last updated:** 2025-11-23
+**Plugin location:** `~/Projects/Claude Plugins/plugins/project-starter/`
