@@ -5,34 +5,23 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "AskUserQuestion"]
 
 # Project Session Startup
 
+## Environment Context (Auto-executed)
+
+**Current Directory:** !`pwd`
+**Git Repository:** !`git rev-parse --is-inside-work-tree 2>/dev/null && echo "Yes" || echo "No"`
+**Git Branch:** !`git branch --show-current 2>/dev/null || echo "N/A"`
+**Git Status:** !`git status --porcelain 2>/dev/null | wc -l | tr -d ' ' | xargs -I {} echo "{} changes"`
+**CLAUDE.md exists:** !`test -f CLAUDE.md && echo "✓" || echo "✗"`
+**README.md exists:** !`test -f README.md && echo "✓" || echo "✗"`
+**TODO.md location:** !`test -f tasks/TODO.md && echo "✓ tasks/TODO.md" || test -f TODO.md && echo "✓ TODO.md (root)" || echo "✗ Missing"`
+
+---
+
 ## Your Task
 
 You are helping the user start a work session on their project. Follow these steps carefully to provide an interactive, helpful project startup experience.
 
-### Step 1: Gather Environment Context
-
-First, gather information about the current environment by running these Bash commands in parallel:
-
-```bash
-pwd
-git rev-parse --is-inside-work-tree 2>/dev/null && echo "Yes" || echo "No"
-git branch --show-current 2>/dev/null || echo "N/A"
-git status --porcelain 2>/dev/null | wc -l | tr -d ' ' | xargs -I {} echo "{} changes"
-test -f CLAUDE.md && echo "✓" || echo "✗"
-test -f README.md && echo "✓" || echo "✗"
-test -f tasks/TODO.md && echo "✓ tasks/TODO.md" || test -f TODO.md && echo "✓ TODO.md (root)" || echo "✗ Missing"
-```
-
-Display the results in a formatted way:
-- **Current Directory:** [result]
-- **Git Repository:** [Yes/No]
-- **Git Branch:** [branch name]
-- **Git Status:** [X changes]
-- **CLAUDE.md exists:** [✓/✗]
-- **README.md exists:** [✓/✗]
-- **TODO.md location:** [location or Missing]
-
-### Step 2: Verify Location
+### Step 1: Verify Location
 
 Check the current directory from the context above:
 
