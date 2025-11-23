@@ -5,23 +5,23 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "AskUserQuestion"]
 
 # Project Session Startup
 
-## Environment Context (Auto-executed)
-
-**Current Directory:** !`pwd`
-**Git Repository:** !`git rev-parse --is-inside-work-tree 2>/dev/null && echo "Yes" || echo "No"`
-**Git Branch:** !`git branch --show-current 2>/dev/null || echo "N/A"`
-**Git Status:** !`git status --porcelain 2>/dev/null | wc -l | tr -d ' ' | xargs -I {} echo "{} changes"`
-**CLAUDE.md exists:** !`test -f CLAUDE.md && echo "✓" || echo "✗"`
-**README.md exists:** !`test -f README.md && echo "✓" || echo "✗"`
-**TODO.md location:** !`test -f tasks/TODO.md && echo "✓ tasks/TODO.md" || test -f TODO.md && echo "✓ TODO.md (root)" || echo "✗ Missing"`
-
----
-
 ## Your Task
 
 You are helping the user start a work session on their project. Follow these steps carefully to provide an interactive, helpful project startup experience.
 
-### Step 1: Verify Location
+### Step 1: Gather Environment Context
+
+First, gather information about the current environment using the Bash tool:
+
+1. **Check current directory:** `pwd`
+2. **Check if Git repository:** `git rev-parse --is-inside-work-tree 2>/dev/null`
+3. **Get Git branch:** `git branch --show-current 2>/dev/null`
+4. **Count uncommitted changes:** `git status --porcelain 2>/dev/null | wc -l`
+5. **Check for key files:** Use Glob or test for CLAUDE.md, README.md, tasks/TODO.md, TODO.md
+
+Run these checks efficiently (you can combine some in parallel Bash calls).
+
+### Step 2: Verify Location
 
 Check the current directory from the context above:
 
@@ -34,7 +34,7 @@ Check the current directory from the context above:
   - Confirm with user: "Not in ~/Projects. Start session here in [current directory]?"
   - Use AskUserQuestion with options: "Yes, use current directory" / "No, navigate to ~/Projects"
 
-### Step 2: Load Project Context
+### Step 3: Load Project Context
 
 Read the following files **if they exist** (handle missing files gracefully):
 
@@ -60,7 +60,7 @@ Read the following files **if they exist** (handle missing files gracefully):
      - **Template 3** (Research): Has `research/`, `experiments/`
      - **Unknown**: Doesn't match any template
 
-### Step 3: Present Project Summary
+### Step 4: Present Project Summary
 
 Create a comprehensive summary in this format:
 
@@ -95,7 +95,7 @@ PROJECT STRUCTURE:
 ─────────────────────────────────────────────────
 ```
 
-### Step 4: Handle Missing Critical Files
+### Step 5: Handle Missing Critical Files
 
 **If CLAUDE.md is missing:**
 
@@ -129,7 +129,7 @@ Use AskUserQuestion:
 
 **Note:** Handle these sequentially (one at a time), not all at once.
 
-### Step 5: Offer Additional Context
+### Step 6: Offer Additional Context
 
 **Memory Search:**
 If the project name or context suggests relevance to user's memories:
@@ -140,7 +140,7 @@ If the project name or context suggests relevance to user's memories:
 If this is an active git repository with commits:
 - Offer: "Would you like me to review recent commits to understand what was worked on last?"
 
-### Step 6: Ask What's Next
+### Step 7: Ask What's Next
 
 Use AskUserQuestion to ask what the user wants to work on:
 
@@ -162,7 +162,7 @@ Options:
 3. "Create documentation" - "Write docs for this project"
 4. "Start coding" - "Begin implementation work"
 
-### Step 7: Execute User's Choice
+### Step 8: Execute User's Choice
 
 Based on the user's selection:
 
