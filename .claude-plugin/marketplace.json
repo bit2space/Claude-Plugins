@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kamil-plugins",
+  "version": "1.0.0",
+  "description": "Kamil's custom Claude Code plugins for project management and workflow automation",
+  "owner": {
+    "name": "Kamil Grabowski",
+    "email": "kamil@royalco.io"
+  },
+  "plugins": [
+    {
+      "name": "project-starter",
+      "version": "1.0.0",
+      "description": "Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps",
+      "source": "./plugins/project-starter",
+      "category": "productivity"
+    }
+  ]
+}
