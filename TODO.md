@@ -2,8 +2,6 @@
 
 ## IN-PROGRESS
 
-- [ ] Document memory system improvements for project-starter
-
 ## TODO
 
 - [ ] Add `/project-starter:quick` - fast start without questions
@@ -13,6 +11,7 @@
 
 ## DONE
 
+- [x] Document memory system improvements for project-starter (2025-11-25)
 - [x] Create `/project-starter:start` command
 - [x] Create `/project-starter:end` command
 - [x] Create `/project-starter:status` command
