@@ -84,7 +84,7 @@ Offer to save session notes for next time:
 
 2. **If user chooses to save notes:**
 
-   Create/update `.claude/session-notes.md` in the project directory:
+   Create/update `docs/session-notes.md` in the project directory (create `docs/` if needed):
 
    ```markdown
    # Session Notes - [Project Name]
@@ -141,7 +141,7 @@ Show a final wrap-up message:
 
 SAVED:
 ✓ TODO.md updated - [N] tasks completed
-✓ Session notes saved to .claude/session-notes.md
+✓ Session notes saved to docs/session-notes.md
 
 CURRENT STATUS:
 - TODO: [N] tasks
@@ -167,7 +167,7 @@ Great work! Use /project-starter:start when you're ready to begin your next sess
 3. **Be specific**: Use real data from git and files, not placeholders
 4. **Date format**: Use YYYY-MM-DD for consistency
 5. **Preserve structure**: When editing TODO.md, maintain the TODO/IN-PROGRESS/DONE sections
-6. **Session notes location**: Always save to `.claude/session-notes.md` in project root
+6. **Session notes location**: Always save to `docs/session-notes.md` (create `docs/` if needed)
 
 ## Edge Cases
 
@@ -220,7 +220,7 @@ Would you like to save session notes?
 
 [Collect session notes from user...]
 
-✓ Session notes saved to .claude/session-notes.md
+✓ Session notes saved to docs/session-notes.md
 
 ★ Session Complete ────────────────────────────
 SAVED:

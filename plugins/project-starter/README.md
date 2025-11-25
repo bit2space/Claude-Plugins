@@ -1,6 +1,6 @@
 # Project Starter Plugin
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Author:** Kamil Grabowski
 
 Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps.
@@ -119,7 +119,7 @@ To use in other projects or share with team, add to `.claude/settings.json`:
    - Optionally adds notes to in-progress tasks
 
 4. **Saves session notes** (interactive):
-   - Creates/updates `.claude/session-notes.md`
+   - Creates/updates `docs/session-notes.md`
    - Captures what was accomplished
    - Records blockers and issues
    - Documents next steps for future session
@@ -151,7 +151,7 @@ FILES CHANGED:
 Which tasks did you complete? [Interactive selection...]
 
 ✓ Updated TODO.md: moved 2 tasks to DONE
-✓ Session notes saved to .claude/session-notes.md
+✓ Session notes saved to docs/session-notes.md
 
 NEXT SESSION:
 → Continue with: Write API documentation
@@ -194,6 +194,10 @@ What would you like to work on today?
 
 ### ✅ Current Features
 
+**v1.2.0:**
+- Quick status command (`/project-starter:status`) - read-only, no prompts
+- Session notes moved to `docs/session-notes.md`
+
 **v1.1.0:**
 - Session end workflow with TODO.md auto-update
 - Session notes saving for continuity between sessions
@@ -210,13 +214,58 @@ What would you like to work on today?
 - Git status integration
 - Edge case handling (empty projects, wrong directories, etc.)
 
+### `/project-starter:status`
+
+**Description:** Show project status - quick overview without full startup flow
+
+**Usage:**
+```bash
+/project-starter:status
+```
+
+**What it does:**
+
+1. **Gathers info in parallel** (fast, no prompts):
+   - Git branch and uncommitted changes count
+   - Last commit hash and message
+   - TODO/IN-PROGRESS/DONE task counts
+
+2. **Shows compact status**:
+   - Project name and git state
+   - Task breakdown with in-progress highlighted
+   - File existence indicators (CLAUDE.md, README.md, TODO.md, session-notes.md)
+
+3. **Lists current work**:
+   - Shows IN-PROGRESS tasks if any exist
+
+**Key difference from `/start`**: Read-only, no questions, single-screen output. Use when you just want to check status without starting a full session.
+
+**Example output:**
+```
+★ Project Status ─────────────────────────────────
+PROJECT: marketplace-platform
+BRANCH: feature/payments | 3 uncommitted changes
+LAST COMMIT: a1b2c3d Add payment validation
+
+TASKS:
+→ IN-PROGRESS: 2 tasks
+  TODO: 5 tasks | DONE: 12 tasks
+
+FILES:
+✓ CLAUDE.md  ✓ README.md  ✓ TODO.md  ✗ session-notes.md
+
+CURRENT WORK:
+1. Implement Stripe payment integration
+2. Write API documentation
+─────────────────────────────────────────────────────
+```
+
 ### 🔮 Future Enhancements
 
 Easily extendable with additional commands:
 
 - `/project-starter:quick` - Fast start without questions
 - `/project-starter:deep` - Include memory search and git history automatically
-- `/project-starter:status` - Show status without loading full context
 
 Additional features:
 
@@ -232,7 +281,9 @@ project-starter/
 ├── .claude-plugin/
 │   └── plugin.json          # Plugin manifest
 ├── commands/
-│   └── start.md             # Main /start command
+│   ├── start.md             # /start - full interactive session startup
+│   ├── end.md               # /end - session wrap-up and notes
+│   └── status.md            # /status - quick read-only status
 └── README.md                # This file
 ```
 
@@ -288,5 +339,5 @@ For issues or questions, contact: kamil@royalco.io
 
 ---
 
-**Last updated:** 2025-11-23
+**Last updated:** 2025-11-25
 **Plugin location:** `~/Projects/Claude Plugins/plugins/project-starter/`

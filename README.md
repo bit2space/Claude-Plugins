@@ -26,26 +26,26 @@ Custom Claude Code plugins for project management and workflow automation.
 
 ### project-starter
 
-Interactive project session starter that loads context and proposes next steps.
-
-**Features:**
-- Automatically detects project location and type
-- Loads project context (CLAUDE.md, README.md, TODO.md)
-- Shows git status and environment info
-- Proposes tasks from TODO.md with interactive selection
-- Creates missing project files based on templates
-- Supports Templates 1-3 from user's CLAUDE.md workflow
+Context teleportation between sessions - fast, reliable project state loading and saving.
 
 **Commands:**
-- `/project-starter:start` - Start interactive project session
+- `/project-starter:start` - Start interactive session (load context, choose task)
+- `/project-starter:end` - End session (update TODOs, save notes)
+- `/project-starter:status` - Quick read-only status check
 
-**Allowed Tools:** Bash, Read, Glob, Grep, AskUserQuestion
+**Features:**
+- Loads project context (CLAUDE.md, README.md, TODO.md)
+- Detects project type (Templates 1/2/3)
+- Tracks tasks (TODO/IN-PROGRESS/DONE)
+- Saves session notes to `docs/session-notes.md`
+- Suggests next task for session continuity
+
+**Allowed Tools:** Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion
 
 **Use Cases:**
-- Starting work session on existing project
-- Quickly getting up to speed with project context
-- Finding next task to work on
-- Setting up new project structure
+- Starting/ending work sessions with state persistence
+- Quick project status checks
+- Task tracking across sessions
 
 ## Development
 
@@ -145,7 +145,9 @@ plugins/[plugin-name]/
 │       ├── .claude-plugin/
 │       │   └── plugin.json
 │       ├── commands/
-│       │   └── start.md
+│       │   ├── start.md
+│       │   ├── end.md
+│       │   └── status.md
 │       └── README.md
 ├── docs/                    # Documentation
 │   ├── migration-context.md

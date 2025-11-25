@@ -1,6 +1,6 @@
 {
   "name": "project-starter",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps",
   "author": {
     "name": "Kamil Grabowski",
