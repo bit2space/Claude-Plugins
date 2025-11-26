@@ -1,6 +1,7 @@
 ---
 description: End project session - save notes, update TODOs, prepare for next time
 allowed-tools: ["Bash", "Read", "Write", "Edit", "Glob", "AskUserQuestion"]
+argument-hint: "[session summary]"
 ---
 
 # Project Session End
@@ -84,7 +85,7 @@ Offer to save session notes for next time:
 
 2. **If user chooses to save notes:**
 
-   Create/update `docs/session-notes.md` in the project directory (create `docs/` if needed):
+   Create/update `docs/session-notes.md` in the project directory (create `docs/` directory if it doesn't exist):
 
    ```markdown
    # Session Notes - [Project Name]
@@ -167,7 +168,7 @@ Great work! Use /project-starter:start when you're ready to begin your next sess
 3. **Be specific**: Use real data from git and files, not placeholders
 4. **Date format**: Use YYYY-MM-DD for consistency
 5. **Preserve structure**: When editing TODO.md, maintain the TODO/IN-PROGRESS/DONE sections
-6. **Session notes location**: Always save to `docs/session-notes.md` (create `docs/` if needed)
+6. **Session notes location**: Always save to `docs/session-notes.md` (canonical path)
 
 ## Edge Cases
 

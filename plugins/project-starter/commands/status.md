@@ -1,6 +1,7 @@
 ---
 description: Show project status - quick overview without full startup flow
 allowed-tools: ["Bash", "Read", "Glob", "Grep"]
+argument-hint: ""
 ---
 
 # Project Status Check
