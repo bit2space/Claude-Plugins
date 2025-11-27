@@ -23,7 +23,12 @@ First, analyze what was done during this session:
    - Use Glob to find `tasks/TODO.md` or `TODO.md`
    - If exists: Read it to see current task status
 
-3. **Get current directory:**
+3. **Check for features.json:**
+   - If exists: Read it to see feature status
+   - Count: total, done, in-progress, pending
+   - Note current in-progress feature
+
+4. **Get current directory:**
    - `pwd` - To know which project we're ending session for
 
 Run these checks efficiently (combine in parallel where possible).
@@ -47,6 +52,10 @@ FILES CHANGED:
 
 CURRENT TODO STATUS:
 [If TODO.md exists, show count: X TODO, Y IN-PROGRESS, Z DONE]
+
+FEATURE STATUS:
+[If features.json exists: X/Y done, Z in-progress]
+→ [FEAT-XXX] [current in-progress feature]
 
 ─────────────────────────────────────────────────
 ```
@@ -73,6 +82,44 @@ CURRENT TODO STATUS:
 4. **If there are still IN-PROGRESS tasks:**
    - Ask: "You have [N] tasks still in progress. Would you like to add notes about their current state?"
    - If yes: Let user add notes/blockers to those tasks in TODO.md
+
+### Step 3.5: Update features.json (if exists)
+
+**If features.json exists:**
+
+1. **Read current features.json** to find features in `in-progress` status
+
+2. **Ask user which features were completed:**
+   - Use AskUserQuestion with multiSelect: true
+   - Question: "Which features did you complete during this session?"
+   - Options: List all in-progress features by ID and description
+   - Include option: "None - no features completed"
+
+3. **If user selects features to complete:**
+   - Ask: "Did tests pass for these features?" (important for checkpoint)
+   - If yes: Mark `passes: true` and `status: "done"`, add `completed_at: YYYY-MM-DD`
+   - If no: Mark `status: "done"`, `passes: false`, add note explaining why
+   - Use Edit tool to update features.json
+   - Confirm: "✓ Updated features.json: [N] features marked as done"
+
+4. **Suggest checkpoint commit:**
+   If any features were marked done with `passes: true`:
+   ```
+   ★ Checkpoint Ready ─────────────────────────────
+
+   Completed features:
+   - [FEAT-XXX] [description]
+
+   Suggested commit:
+     feat(FEAT-XXX): [description]
+
+   Would you like to commit this checkpoint?
+   ─────────────────────────────────────────────────
+   ```
+
+5. **If there are still in-progress features:**
+   - Ask: "You have [FEAT-XXX] still in progress. Add a note about current state?"
+   - If yes: Update the feature's `notes` field in features.json
 
 ### Step 4: Save Session Notes
 
@@ -142,15 +189,18 @@ Show a final wrap-up message:
 
 SAVED:
 ✓ TODO.md updated - [N] tasks completed
+✓ features.json updated - [N] features completed
 ✓ Session notes saved to docs/session-notes.md
 
 CURRENT STATUS:
 - TODO: [N] tasks
 - IN-PROGRESS: [N] tasks
 - DONE: [N] tasks (+[N] this session)
+- FEATURES: [X]/[Y] done (+[N] this session)
 
 NEXT SESSION:
-→ [Suggested next task or action]
+→ [Suggested next feature or task]
+  [FEAT-XXX] [next pending feature description]
 
 GIT STATUS:
 [N] uncommitted changes

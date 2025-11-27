@@ -52,7 +52,16 @@ Read the following files **if they exist** (handle missing files gracefully):
    - If exists: Read it, count tasks in each section (TODO/IN-PROGRESS/DONE)
    - If missing: Note for later proposal
 
-4. **Project Structure Analysis**
+4. **features.json** (feature tracking - Agent Harness pattern)
+   - If exists: Read it and extract:
+     - Total feature count
+     - Done features (status: "done" with passes: true)
+     - In-progress features (status: "in-progress")
+     - Pending features (status: "pending")
+     - Current in-progress feature ID and description
+   - If missing: Note for later proposal (suggest /init-features)
+
+5. **Project Structure Analysis**
    - Use Glob to find key directories:
      - `docs/`, `src/`, `tests/`, `reference/`, `tasks/`, `research/`, `experiments/`, `archive/`
    - Identify project template type based on structure:
@@ -81,6 +90,8 @@ LOADED CONTEXT:
 ✓ CLAUDE.md - [Brief summary of goals/purpose, max 1 line]
 ✓ README.md - [Brief project description, max 1 line]
 ✓ TODO.md - [X TODO, Y IN-PROGRESS, Z DONE tasks]
+✓ features.json - [X/Y done, Z in-progress]
+  → [FEAT-XXX] [current in-progress feature description]
 
 OR if files are missing:
 
@@ -88,6 +99,7 @@ MISSING FILES:
 ✗ CLAUDE.md - Project-specific configuration and goals
 ✗ README.md - Project overview and documentation
 ✗ TODO.md - Task tracking and progress
+✗ features.json - Feature tracking (run /init-features to set up)
 
 PROJECT STRUCTURE:
 - [List key directories found, e.g., "docs/, src/, tests/"]
@@ -128,6 +140,16 @@ Use AskUserQuestion:
   1. "Yes, create TODO.md" - "Set up task tracking in tasks/TODO.md"
   2. "No, skip" - "Continue without task tracking"
 
+**If features.json is missing:**
+
+Use AskUserQuestion:
+- Question: "No feature tracking found. Feature tracking helps with long-running tasks by breaking work into atomic, testable features. Would you like to set it up?"
+- Options:
+  1. "Yes, initialize features" - "Run /init-features to create features.json"
+  2. "No, skip" - "Continue without feature tracking"
+
+If user chooses Yes, remind them to run `/project-starter:init-features` after startup completes.
+
 **Note:** Handle these sequentially (one at a time), not all at once.
 
 ### Step 6: Offer Additional Context
@@ -145,7 +167,25 @@ If this is an active git repository with commits:
 
 Use AskUserQuestion to ask what the user wants to work on:
 
-**If TODO.md exists with tasks:**
+**If features.json exists with in-progress feature:**
+
+Question: "What would you like to work on today?"
+Options (prioritize current feature):
+1. "Continue feature: [FEAT-XXX] [description]" - "Resume work on current feature"
+2. "Start next feature: [FEAT-YYY] [description]" - "Begin the next pending feature"
+3. "Review project documentation" - "Read through docs and understand context"
+4. "Explore codebase" - "Navigate and understand the code structure"
+
+**If features.json exists but no in-progress feature:**
+
+Question: "What would you like to work on today?"
+Options:
+1. "Start feature: [FEAT-XXX] [first pending feature]" - "Begin working on this feature"
+2. "Review features list" - "See all pending features"
+3. "Review project documentation" - "Read through docs and understand context"
+4. "Explore codebase" - "Navigate and understand the code structure"
+
+**If TODO.md exists with tasks (no features.json):**
 
 Question: "What would you like to work on today?"
 Options (customize based on actual tasks found):
@@ -154,13 +194,13 @@ Options (customize based on actual tasks found):
 3. "Review project documentation" - "Read through docs and understand context"
 4. "Explore codebase" - "Navigate and understand the code structure"
 
-**If TODO.md doesn't exist or has no tasks:**
+**If neither TODO.md nor features.json exists:**
 
 Question: "What would you like to work on today?"
 Options:
 1. "Set up project structure" - "Create directories and initial files"
-2. "Review existing code" - "Explore what's already here"
-3. "Create documentation" - "Write docs for this project"
+2. "Initialize feature tracking" - "Run /init-features to set up features.json"
+3. "Review existing code" - "Explore what's already here"
 4. "Start coding" - "Begin implementation work"
 
 ### Step 8: Execute User's Choice

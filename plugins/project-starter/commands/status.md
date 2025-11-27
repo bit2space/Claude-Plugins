@@ -24,6 +24,7 @@ Use Glob to check for key files:
 - `README.md`
 - `tasks/TODO.md` or `TODO.md`
 - `docs/session-notes.md`
+- `features.json`
 
 ### Step 2: Read TODO Status
 
@@ -31,6 +32,13 @@ If TODO.md exists (prefer `tasks/TODO.md`):
 - Count tasks in each section (TODO/IN-PROGRESS/DONE)
 - Use Grep to count: `## TODO`, `## IN-PROGRESS`, `## DONE` sections
 - Count `- [ ]` (unchecked) and `- [x]` (checked) items
+
+### Step 2.5: Read Feature Status
+
+If features.json exists:
+- Count total features
+- Count by status: done, in-progress, pending, failed, blocked
+- Find current in-progress feature (ID and description)
 
 ### Step 3: Present Quick Status
 
@@ -42,12 +50,15 @@ PROJECT: [Name from directory]
 BRANCH: [branch] | [N] uncommitted changes
 LAST COMMIT: [hash] [message]
 
+FEATURES: [X]/[Y] done, [Z] in-progress
+→ [FEAT-XXX] [current in-progress description]
+
 TASKS:
 → IN-PROGRESS: [N] tasks
   TODO: [N] tasks | DONE: [N] tasks
 
 FILES:
-✓ CLAUDE.md  ✓ README.md  ✓ TODO.md  ✓ session-notes.md
+✓ CLAUDE.md  ✓ README.md  ✓ TODO.md  ✓ features.json
               (or ✗ for missing files)
 ─────────────────────────────────────────────────────
 ```
@@ -77,12 +88,15 @@ PROJECT: marketplace-platform
 BRANCH: feature/payments | 3 uncommitted changes
 LAST COMMIT: a1b2c3d Add payment validation
 
+FEATURES: 8/15 done, 1 in-progress
+→ [FEAT-009] Implement Stripe payment integration
+
 TASKS:
 → IN-PROGRESS: 2 tasks
   TODO: 5 tasks | DONE: 12 tasks
 
 FILES:
-✓ CLAUDE.md  ✓ README.md  ✓ TODO.md  ✗ session-notes.md
+✓ CLAUDE.md  ✓ README.md  ✓ TODO.md  ✓ features.json
 
 CURRENT WORK:
 1. Implement Stripe payment integration

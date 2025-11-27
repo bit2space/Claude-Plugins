@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Features Schema",
+  "description": "Schema for features.json - atomic feature tracking for long-running agents",
+  "type": "object",
+  "required": ["version", "features"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version (semver)"
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Project name"
+        },
+        "created": {
+          "type": "string",
+          "format": "date",
+          "description": "Creation date (YYYY-MM-DD)"
+        }
+      }
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^FEAT-\\d{3,}$",
+            "description": "Unique feature ID (FEAT-XXX format)"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["functional", "ui", "api", "infrastructure"],
+            "description": "Feature category"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "description": "End-to-end user behavior description"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in-progress", "done", "failed", "blocked"],
+            "description": "Current status"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "default": "medium",
+            "description": "Feature priority"
+          },
+          "test_command": {
+            "type": "string",
+            "description": "Command to run tests for this feature"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Implementation steps"
+          },
+          "passes": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether tests pass (only true after verification)"
+          },
+          "completed_at": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "Completion date (YYYY-MM-DD)"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes, blockers, or context"
+          }
+        }
+      }
+    }
+  }
+}

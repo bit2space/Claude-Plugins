@@ -1,0 +1,9 @@
+{
+  "name": "agent-harness",
+  "version": "1.0.0",
+  "description": "Reusable components for building effective agent harnesses - feature tracking, checkpoints, and structured workflows",
+  "author": {
+    "name": "Kamil Grabowski",
+    "email": "kamil@royalco.io"
+  }
+}

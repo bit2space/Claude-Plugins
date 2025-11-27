@@ -10,10 +10,17 @@
   "plugins": [
     {
       "name": "project-starter",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "description": "Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps",
       "source": "./plugins/project-starter",
       "category": "productivity"
+    },
+    {
+      "name": "agent-harness",
+      "version": "1.0.0",
+      "description": "Reusable components for building effective agent harnesses - feature tracking, checkpoints, and structured workflows",
+      "source": "./plugins/agent-harness",
+      "category": "development"
     }
   ]
 }
