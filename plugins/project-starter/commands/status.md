@@ -106,4 +106,72 @@ CURRENT WORK:
 
 ---
 
+## Tool Call Examples
+
+**IMPORTANT:** This command is READ-ONLY. Never use Write, Edit, or AskUserQuestion.
+
+### Example: All Parallel Status Checks
+
+**Tool Calls (ALL run in parallel for speed):**
+```
+Bash: pwd
+Bash: git status --porcelain 2>/dev/null | wc -l
+Bash: git branch --show-current 2>/dev/null
+Bash: git log -1 --format="%h %s" 2>/dev/null
+Glob: {CLAUDE.md,README.md,TODO.md,tasks/TODO.md,features.json,docs/session-notes.md}
+```
+
+**Expected Results:**
+```
+pwd → /Users/kamil/Projects/marketplace-platform
+git status | wc -l → 3
+git branch → feature/payments
+git log -1 → a1b2c3d Add payment validation
+Glob → [CLAUDE.md, README.md, tasks/TODO.md, features.json]
+```
+
+### Example: Reading features.json for Status
+
+**Tool Call:**
+```
+Read: features.json
+```
+
+**Extract counts only:**
+- Done: count where `status === "done" && passes === true`
+- In-progress: count where `status === "in-progress"`
+- Current: find feature where `status === "in-progress"`
+
+### Example: Counting TODO Items
+
+**Tool Call:**
+```
+Grep: pattern="- \[ \]" file=tasks/TODO.md
+Grep: pattern="- \[x\]" file=tasks/TODO.md
+```
+
+Or read file and count sections manually.
+
+---
+
+## Context Budget Guidelines
+
+### READ-ONLY Constraints
+- **Allowed:** Bash, Read, Glob, Grep
+- **Forbidden:** Write, Edit, AskUserQuestion, Task
+
+### Output Limits
+- **Status output:** Single screen (< 30 lines)
+- **No full file contents:** Only counts and summaries
+- **No interaction:** Fast, silent execution
+
+### Aggregation Rules
+```
+FEATURES: 8/15 done, 1 in-progress     ← counts only
+TASKS: 5 TODO, 2 IN-PROGRESS, 12 DONE  ← counts only
+FILES: ✓ ✓ ✓ ✗                         ← existence only
+```
+
+---
+
 Start by gathering all information in parallel, then present the status.

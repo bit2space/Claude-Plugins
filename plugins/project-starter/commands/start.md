@@ -295,4 +295,106 @@ What would you like to work on today?
 
 ---
 
+## Tool Call Examples
+
+These examples show exact tool invocations with expected outputs to help you execute correctly.
+
+### Example: Parallel Environment Checks (Step 1)
+
+**Tool Calls (run in parallel):**
+```
+Bash: pwd
+Bash: git rev-parse --is-inside-work-tree 2>/dev/null
+Bash: git branch --show-current 2>/dev/null
+Bash: git status --porcelain 2>/dev/null | wc -l
+```
+
+**Expected Results:**
+```
+pwd → /Users/kamil/Projects/marketplace-platform
+git rev-parse → true
+git branch → feature/payment-integration
+git status | wc -l → 3
+```
+
+### Example: Reading features.json
+
+**Tool Call:**
+```
+Read: features.json
+```
+
+**Expected Structure:**
+```json
+{
+  "features": [
+    {"id": "FEAT-001", "status": "done", "passes": true, "description": "User login"},
+    {"id": "FEAT-002", "status": "in-progress", "passes": false, "description": "Payment integration"}
+  ]
+}
+```
+
+**What to extract:**
+- Total: 2 features
+- Done: 1 (count where status="done" AND passes=true)
+- In-progress: 1 (current work)
+- Current feature: FEAT-002 "Payment integration"
+
+### Example: AskUserQuestion Format (Step 7)
+
+**Tool Call:**
+```json
+AskUserQuestion: {
+  "questions": [{
+    "question": "What would you like to work on today?",
+    "header": "Task",
+    "options": [
+      {"label": "Continue FEAT-002", "description": "Resume payment integration"},
+      {"label": "Start FEAT-003", "description": "Begin user dashboard"},
+      {"label": "Review docs", "description": "Read through project documentation"},
+      {"label": "Explore code", "description": "Navigate and understand codebase"}
+    ],
+    "multiSelect": false
+  }]
+}
+```
+
+### Example: Glob for Project Structure
+
+**Tool Call:**
+```
+Glob: **/
+```
+
+**Use to identify directories:** `docs/`, `src/`, `tests/`, `tasks/`, `research/`
+
+---
+
+## Context Budget Guidelines
+
+### Large File Handling
+- **features.json > 50 features:** Summarize counts, don't dump full JSON
+- **TODO.md > 100 lines:** Count sections, show only IN-PROGRESS items
+- **README.md > 200 lines:** Extract first paragraph + key sections only
+
+### Result Summarization Pattern
+
+**Instead of showing full file contents, summarize:**
+```
+LOADED CONTEXT:
+✓ CLAUDE.md - E-commerce platform with payment focus (15 rules)
+✓ README.md - Marketplace connecting buyers and sellers
+✓ TODO.md - 5 TODO, 2 IN-PROGRESS, 12 DONE tasks
+✓ features.json - 8/15 done, 1 in-progress
+  → [FEAT-009] Implement Stripe payment integration
+```
+
+### Aggregation Examples
+- **Features:** "8/15 done, 1 in-progress" (not full JSON)
+- **Tasks:** "5 TODO, 2 IN-PROGRESS, 12 DONE" (not full list)
+- **Git:** "3 uncommitted changes" (not full porcelain output)
+- **Structure:** "src/, tests/, docs/" (not full tree)
+
+---
+
 Start by verifying the location and loading the project context as described above.

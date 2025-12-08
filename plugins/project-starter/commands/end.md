@@ -289,4 +289,141 @@ Tip: Consider committing your work
 
 ---
 
+## Tool Call Examples
+
+These examples show exact tool invocations with expected outputs.
+
+### Example: Git Analysis (Step 1 - parallel)
+
+**Tool Calls (run in parallel):**
+```
+Bash: git status --porcelain
+Bash: git diff --stat
+Bash: git diff --name-only
+Bash: pwd
+```
+
+**Expected Results:**
+```
+git status --porcelain →
+ M src/auth/middleware.ts
+ M src/api/payments.ts
+?? tests/new-test.ts
+
+git diff --stat →
+ 2 files changed, 127 insertions(+), 43 deletions(-)
+
+git diff --name-only →
+src/auth/middleware.ts
+src/api/payments.ts
+
+pwd →
+/Users/kamil/Projects/marketplace-platform
+```
+
+### Example: Updating features.json (Step 3.5)
+
+**Before (Read features.json):**
+```json
+{"id": "FEAT-002", "status": "in-progress", "passes": false, "description": "Payment integration"}
+```
+
+**Edit Calls (sequential):**
+```
+Edit: features.json
+old_string: "status": "in-progress"
+new_string: "status": "done"
+
+Edit: features.json
+old_string: "passes": false
+new_string: "passes": true, "completed_at": "2025-12-08"
+```
+
+### Example: AskUserQuestion with multiSelect (Step 3)
+
+**Tool Call:**
+```json
+AskUserQuestion: {
+  "questions": [{
+    "question": "Which tasks did you complete during this session?",
+    "header": "Completed",
+    "options": [
+      {"label": "Implement Stripe integration", "description": "Payment processing setup"},
+      {"label": "Write API documentation", "description": "Payment endpoints docs"},
+      {"label": "None", "description": "No tasks completed this session"}
+    ],
+    "multiSelect": true
+  }]
+}
+```
+
+### Example: Updating TODO.md (Step 3)
+
+**Edit Call to move task to DONE:**
+```
+Edit: tasks/TODO.md
+old_string: ## IN-PROGRESS
+- [ ] Implement Stripe integration
+new_string: ## IN-PROGRESS
+
+---
+(Then add to DONE section):
+
+Edit: tasks/TODO.md
+old_string: ## DONE
+new_string: ## DONE
+- [x] Implement Stripe integration (2025-12-08)
+```
+
+### Example: Creating Session Notes (Step 4)
+
+**Write Call:**
+```
+Write: docs/session-notes.md
+content: |
+  # Session Notes - marketplace-platform
+
+  ## 2025-12-08 - Session End
+
+  ### What Was Accomplished
+  - Completed Stripe payment integration
+  - Added error handling for failed transactions
+
+  ### Files Modified
+  - src/api/payments.ts
+  - src/auth/middleware.ts
+
+  ### Next Steps
+  - Test payment flow end-to-end
+  - Add webhook handling
+```
+
+---
+
+## Context Budget Guidelines
+
+### Large Output Handling
+- **Git diff > 20 files:** Show `git diff --stat` summary only
+- **TODO.md > 50 tasks:** Count by section, list only IN-PROGRESS
+- **features.json > 30 features:** Show counts and current feature only
+
+### Result Summarization Pattern
+
+**Instead of full git output:**
+```
+SESSION ACTIVITY:
+- Modified files: 5 files
+- Git changes: 127 insertions(+), 43 deletions(-)
+- Uncommitted changes: Yes
+
+Key files: src/api/payments.ts, src/auth/middleware.ts
+```
+
+### Session Notes - Keep Concise
+- What Was Accomplished: 2-3 bullet points max
+- Files Modified: List only, no content
+- Next Steps: 1-2 actionable items
+
+---
+
 Start by gathering session activity as described above.

@@ -131,3 +131,102 @@ This skill integrates with `/start`, `/end`, `/status` commands:
 - `/start` - Shows feature progress and current work
 - `/end` - Asks which features were completed
 - `/status` - Quick feature stats
+
+---
+
+## Tool Call Examples
+
+These examples show exact tool invocations for working with features.json.
+
+### Example: Reading Feature Status
+
+**Tool Call:**
+```
+Read: features.json
+```
+
+**Parse Logic (pseudocode):**
+```javascript
+// Count by status
+const features = json.features;
+const done = features.filter(f => f.status === "done" && f.passes === true).length;
+const inProgress = features.filter(f => f.status === "in-progress").length;
+const pending = features.filter(f => f.status === "pending").length;
+const failed = features.filter(f => f.status === "failed").length;
+const blocked = features.filter(f => f.status === "blocked").length;
+const total = features.length;
+
+// Find current work
+const current = features.find(f => f.status === "in-progress");
+// Output: FEAT-006 "Implement user authentication"
+```
+
+### Example: Starting a Feature
+
+**Pre-check:** Ensure no other feature is `in-progress`
+
+**Edit Call:**
+```
+Edit: features.json
+old_string: {"id": "FEAT-003", "status": "pending"
+new_string: {"id": "FEAT-003", "status": "in-progress"
+```
+
+### Example: Completing a Feature
+
+**Step 1 - Change status:**
+```
+Edit: features.json
+old_string: "status": "in-progress"
+new_string: "status": "done"
+```
+
+**Step 2 - Mark tests passed:**
+```
+Edit: features.json
+old_string: "passes": false
+new_string: "passes": true, "completed_at": "2025-12-08"
+```
+
+### Example: Marking Feature as Blocked
+
+**Edit Call:**
+```
+Edit: features.json
+old_string: "status": "in-progress", "passes": false, "notes": ""
+new_string: "status": "blocked", "passes": false, "notes": "Waiting for API credentials from client"
+```
+
+### Example: Checkpoint Commit Message
+
+When feature marked done with `passes: true`:
+```
+Suggested commit:
+  feat(FEAT-006): Implement user authentication
+
+Include:
+- All related code changes
+- Updated features.json
+- New tests
+```
+
+---
+
+## Context Budget Guidelines
+
+### Summarization Rules
+- **Display format:** "8/15 done, 1 in-progress" (not full JSON)
+- **Current feature:** "[FEAT-006] Implement user authentication"
+- **Never dump:** Full features.json to output
+
+### Large features.json Handling
+- **> 30 features:** Show counts + current only
+- **> 50 features:** Warn about file size, suggest archiving done features
+
+### Output Template
+```
+FEATURES: [done]/[total] done, [in-progress] in-progress
+→ [FEAT-XXX] [current feature description]
+
+Pending: [count] | Blocked: [count] | Failed: [count]
+```
