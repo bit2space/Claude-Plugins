@@ -1,5 +1,38 @@
 # Session Notes - Claude Plugins
 
+## 2025-12-08 - Code Review & Fixes
+
+### What Was Accomplished
+
+Ran comprehensive code review on project-starter plugin and fixed 5 issues:
+
+1. **Version mismatch** - Aligned to v1.4.0 across plugin.json, marketplace.json, README.md
+2. **README file structure** - Added missing agents/, hooks/, init-features.md to docs
+3. **AWK parsing robustness** - Added jq fallback in session-start.sh for reliable JSON parsing
+4. **Checkbox format docs** - Documented `- [ ]`, `- [-]`, `- [x]` patterns
+5. **Subagent reference** - Fixed init-features.md to use project-starter:feature-initializer
+
+Also cleared stale TODO items (quick command, memory prompt, SessionStart hooks) - decided not to pursue.
+
+### Commits Made
+
+- `1286cf0` fix: Address code review issues in project-starter plugin
+- `1271303` chore: Clean up TODO list and update session notes
+
+### Files Modified
+
+- plugins/project-starter/.claude-plugin/plugin.json
+- plugins/project-starter/README.md (+37 lines)
+- plugins/project-starter/commands/init-features.md
+- plugins/project-starter/hooks/session-start.sh
+
+### Next Steps
+
+- Run `/plugin update project-starter@kamil-plugins` to apply fixes
+- Consider adding new features if needed
+
+---
+
 ## 2025-12-08 - Session End
 
 ### What Was Accomplished
