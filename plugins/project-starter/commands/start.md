@@ -1,6 +1,6 @@
 ---
 description: Start project session - load context, show status, choose task
-allowed-tools: ["Bash", "Read", "Glob", "Grep", "AskUserQuestion"]
+allowed-tools: ["Bash", "Read", "Write", "Glob", "Grep", "AskUserQuestion"]
 argument-hint: "[task focus]"
 ---
 
@@ -226,6 +226,45 @@ Based on the user's selection:
 4. **If setting up:**
    - Propose directory structure based on project type
    - Create files as confirmed by user
+
+### Step 9: Create PROGRESS.md Scratchpad
+
+After the user selects their task, create a live working progress file:
+
+1. **Create PROGRESS.md in project root:**
+   ```markdown
+   # Progress: [Task Name from user's choice]
+
+   **Started:** [Current date/time]
+   **Status:** 🔄 In Progress
+
+   ## Current Task
+   [Description from user's selection]
+
+   ## Checklist
+   - [ ] Step 1: [first subtask]
+   - [ ] Step 2: [second subtask]
+   - [ ] Step 3: [third subtask]
+
+   ## Notes
+   [To be filled during work]
+
+   ## Files Modified
+   [To be updated as files change]
+   ```
+
+2. **Break down task into steps:**
+   - Based on selected task, propose 3-5 concrete subtasks
+   - Use AskUserQuestion: "Here's a suggested breakdown. Modify or confirm?"
+   - Options: "Looks good" / "Let me adjust"
+
+3. **Confirm creation:**
+   ```
+   ✓ Created PROGRESS.md - I'll update this as we work.
+     You can check it anytime to see current progress.
+   ```
+
+**Why PROGRESS.md?** This pattern from Anthropic's Claude Code Best Practices helps maintain context across work iterations. Unlike session-notes.md (retrospective), PROGRESS.md is updated live during work.
 
 ### Edge Case Handling
 

@@ -60,6 +60,36 @@ FEATURE STATUS:
 ─────────────────────────────────────────────────
 ```
 
+### Step 2.5: Handle PROGRESS.md (if exists)
+
+Check for PROGRESS.md in project root:
+
+1. **If PROGRESS.md exists:**
+   - Read its contents
+   - Show summary of completed vs remaining items:
+     ```
+     PROGRESS.md STATUS:
+     ✓ 3/5 checklist items completed
+     Remaining: Step 4, Step 5
+     ```
+
+2. **Ask user what to do:**
+   - Use AskUserQuestion:
+     - Question: "What would you like to do with PROGRESS.md?"
+     - Options:
+       1. "Archive to session notes" - Merge completed items into docs/session-notes.md
+       2. "Keep for next session" - Leave PROGRESS.md as-is
+       3. "Delete" - Remove PROGRESS.md (task complete or abandoned)
+
+3. **If archiving:**
+   - Append PROGRESS.md content to docs/session-notes.md under today's date
+   - Delete PROGRESS.md after archiving
+   - Confirm: "✓ Progress archived to docs/session-notes.md"
+
+4. **If keeping:**
+   - Leave file untouched
+   - Remind: "PROGRESS.md kept for next session"
+
 ### Step 3: Update TODO.md (if exists)
 
 **If TODO.md exists:**
