@@ -1,5 +1,37 @@
 # Session Notes - Claude Plugins
 
+## 2025-12-08 - Documentation Sync
+
+### What Was Accomplished
+
+Synchronized project documentation with actual codebase state (was stuck at v1.2.0, now at v1.4.0):
+
+1. **CLAUDE.md** - Updated version, added agent-harness plugin section, documented hooks, expanded file structure
+2. **README.md** - Added agent-harness plugin documentation, documented SessionStart/PostToolUse hooks, updated marketplace structure
+3. **TODO.md** - Archived all completed v1.4.0 tasks, added missing items (init-features, hooks, agent-harness), reset for fresh start
+
+### Files Modified
+
+- CLAUDE.md (+33 lines, -22 lines)
+- README.md (+62 lines, -8 lines)
+- TODO.md (+7 lines)
+
+### Key Changes
+
+| Before | After |
+|--------|-------|
+| project-starter v1.2.0 | v1.4.0 |
+| 3 commands documented | 4 commands (+ init-features) |
+| No hooks documented | SessionStart + PostToolUse hooks |
+| Missing agent-harness | Full agent-harness docs |
+
+### Next Steps
+
+- Commit documentation updates
+- Run `/plugin update project-starter@kamil-plugins` to refresh
+
+---
+
 ## 2025-12-08 - Code Review & Fixes
 
 ### What Was Accomplished

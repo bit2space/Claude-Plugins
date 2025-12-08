@@ -24,7 +24,7 @@ Custom Claude Code plugins for project management and workflow automation.
 
 ## Available Plugins
 
-### project-starter
+### project-starter (v1.4.0)
 
 Context teleportation between sessions - fast, reliable project state loading and saving.
 
@@ -32,20 +32,59 @@ Context teleportation between sessions - fast, reliable project state loading an
 - `/project-starter:start` - Start interactive session (load context, choose task)
 - `/project-starter:end` - End session (update TODOs, save notes)
 - `/project-starter:status` - Quick read-only status check
+- `/project-starter:init-features` - Initialize features.json for feature tracking
 
 **Features:**
-- Loads project context (CLAUDE.md, README.md, TODO.md)
+- Loads project context (CLAUDE.md, README.md, TODO.md, features.json)
 - Detects project type (Templates 1/2/3)
-- Tracks tasks (TODO/IN-PROGRESS/DONE)
+- Tracks tasks (TODO/IN-PROGRESS/DONE) and features
 - Saves session notes to `docs/session-notes.md`
 - Suggests next task for session continuity
+
+**Hooks:**
+- **SessionStart** - Auto-displays project context (git, features, todos) on session start
+- **PostToolUse** - Suggests checkpoint commits when features are marked done
 
 **Allowed Tools:** Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion
 
 **Use Cases:**
 - Starting/ending work sessions with state persistence
 - Quick project status checks
-- Task tracking across sessions
+- Task and feature tracking across sessions
+
+---
+
+### agent-harness (v1.0.0)
+
+Reusable components for building effective agent harnesses, implementing patterns from [Anthropic's Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices).
+
+**Skills:**
+- `feature-tracking` - Structured feature tracking with `features.json`
+- `progress-tracking` - Live progress documentation with `PROGRESS.md`
+
+**Features:**
+- Atomic, testable features with status tracking
+- One feature at a time workflow
+- Git as external memory (commits = checkpoints)
+- Append-only feature history
+
+**Feature Schema:**
+```json
+{
+  "id": "FEAT-001",
+  "category": "functional|ui|api|infrastructure",
+  "description": "End-to-end user behavior",
+  "status": "pending|in-progress|done|failed|blocked",
+  "priority": "high|medium|low",
+  "test_command": "npm test -- --grep 'feature'",
+  "passes": false
+}
+```
+
+**Use Cases:**
+- Long-running agent tasks with checkpoints
+- Feature-driven development workflows
+- Structured progress tracking
 
 ## Development
 
@@ -141,17 +180,30 @@ plugins/[plugin-name]/
 ├── .claude-plugin/
 │   └── marketplace.json     # Marketplace manifest
 ├── plugins/
-│   └── project-starter/
+│   ├── project-starter/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json  # Version, hooks config
+│   │   ├── commands/
+│   │   │   ├── start.md
+│   │   │   ├── end.md
+│   │   │   ├── status.md
+│   │   │   └── init-features.md
+│   │   ├── agents/
+│   │   │   └── feature-initializer.md
+│   │   ├── hooks/
+│   │   │   └── session-start.sh
+│   │   └── README.md
+│   └── agent-harness/
 │       ├── .claude-plugin/
 │       │   └── plugin.json
-│       ├── commands/
-│       │   ├── start.md
-│       │   ├── end.md
-│       │   └── status.md
+│       ├── skills/
+│       │   ├── feature-tracking/
+│       │   └── progress-tracking/
 │       └── README.md
 ├── docs/                    # Documentation
 │   ├── migration-context.md
 │   ├── migration-todo.md
+│   ├── session-notes.md
 │   └── README.md
 ├── .gitignore
 └── README.md                # This file

@@ -1,7 +1,7 @@
 # Claude Plugins Marketplace
 
 **Status**: in-progress
-**Last Updated**: 2025-11-25
+**Last Updated**: 2025-12-08
 **Priority**: medium
 
 ## Project Goal
@@ -11,24 +11,40 @@ Personal Claude Code plugin marketplace for **context teleportation** - fast, re
 ## Core Concept
 
 Instead of relying on Claude's memory system, use **file-based state**:
-- Load: CLAUDE.md, README.md, TODO.md → structured context
+- Load: CLAUDE.md, README.md, TODO.md, features.json → structured context
 - Save: session notes, TODO updates → `docs/session-notes.md`
+- Automation: SessionStart hook provides instant context on session start
 - Result: predictable, deterministic session continuity
 
-## Current Plugin: project-starter (v1.2.0)
+## Plugins
 
-Three commands for session lifecycle:
+### project-starter (v1.4.0)
+
+Session lifecycle management with four commands:
 
 | Command | Purpose | Interactive |
 |---------|---------|-------------|
 | `/project-starter:start` | Load context, choose task | Yes |
 | `/project-starter:end` | Save notes, update TODOs | Yes |
 | `/project-starter:status` | Quick read-only check | No |
+| `/project-starter:init-features` | Initialize features.json | Yes |
+
+**Hooks:**
+- **SessionStart**: Auto-displays project context (git, features, todos) on session start
+- **PostToolUse**: Suggests checkpoint commits when features are completed
+
+### agent-harness (v1.0.0)
+
+Reusable components for long-running agent tasks (from [Anthropic's best practices](https://www.anthropic.com/engineering/claude-code-best-practices)):
+
+**Skills:**
+- `feature-tracking` - Structured feature tracking with `features.json`
+- `progress-tracking` - Live progress documentation with `PROGRESS.md`
 
 ## Development Workflow
 
 ```bash
-# 1. Edit files in plugins/project-starter/
+# 1. Edit files in plugins/[plugin-name]/
 # 2. Commit changes
 git add . && git commit -m "description"
 # 3. Update plugin
@@ -41,13 +57,25 @@ git add . && git commit -m "description"
 
 ```
 .claude-plugin/marketplace.json    # Marketplace manifest
-plugins/project-starter/
-├── .claude-plugin/plugin.json     # Plugin manifest (version here)
-├── commands/
-│   ├── start.md                   # Full interactive startup
-│   ├── end.md                     # Session wrap-up
-│   └── status.md                  # Quick status
-└── README.md                      # Plugin docs
+plugins/
+├── project-starter/
+│   ├── .claude-plugin/plugin.json # Plugin manifest (version, hooks)
+│   ├── commands/                  # Slash commands
+│   │   ├── start.md
+│   │   ├── end.md
+│   │   ├── status.md
+│   │   └── init-features.md
+│   ├── agents/                    # Agent definitions
+│   │   └── feature-initializer.md
+│   ├── hooks/                     # Shell hooks
+│   │   └── session-start.sh
+│   └── README.md
+└── agent-harness/
+    ├── .claude-plugin/plugin.json
+    ├── skills/                    # Reusable skills
+    │   ├── feature-tracking/
+    │   └── progress-tracking/
+    └── README.md
 ```
 
 ## Conventions
@@ -56,16 +84,17 @@ plugins/project-starter/
 - **Session notes**: Save to `docs/session-notes.md` (not `.claude/`)
 - **Templates**: Respect user's Template 1/2/3 structure from global CLAUDE.md
 - **Non-destructive**: Always ask before creating/modifying files
+- **Features.json**: One feature at a time, append-only, git as checkpoints
 
 ## Known Constraints
 
 - Git repository required (Claude Code uses `gitCommitSha` tracking)
 - Author field must be object `{name, email}` not string
 - Inline bash (`!command`) requires user approval
+- SessionStart hook requires `jq` for best JSON parsing (falls back to awk)
 
 ## Future Ideas
 
 - `/project-starter:quick` - Fast start without questions
 - `/project-starter:deep` - Include memory search automatically
 - Memory prompt in `/end` - "Save to ~/memories?"
-- SessionStart hooks for auto-loading
