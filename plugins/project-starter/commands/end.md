@@ -328,16 +328,14 @@ pwd →
 {"id": "FEAT-002", "status": "in-progress", "passes": false, "description": "Payment integration"}
 ```
 
-**Edit Calls (sequential):**
+**Edit Call (include feature ID for safety):**
 ```
 Edit: features.json
-old_string: "status": "in-progress"
-new_string: "status": "done"
+old_string: {"id": "FEAT-002", "status": "in-progress", "passes": false
+new_string: {"id": "FEAT-002", "status": "done", "passes": true, "completed_at": "2025-12-08"
+```
 
-Edit: features.json
-old_string: "passes": false
-new_string: "passes": true, "completed_at": "2025-12-08"
-```
+**Why include feature ID:** Generic matches like `"status": "in-progress"` could match the wrong feature if multiple exist.
 
 ### Example: AskUserQuestion with multiSelect (Step 3)
 
@@ -359,21 +357,29 @@ AskUserQuestion: {
 
 ### Example: Updating TODO.md (Step 3)
 
-**Edit Call to move task to DONE:**
+**Moving a task requires two edits:**
+
+**Step 1 - Remove from IN-PROGRESS (include enough context for unique match):**
 ```
 Edit: tasks/TODO.md
 old_string: ## IN-PROGRESS
 - [ ] Implement Stripe integration
+
+## TODO
 new_string: ## IN-PROGRESS
 
----
-(Then add to DONE section):
+## TODO
+```
 
+**Step 2 - Add to DONE section:**
+```
 Edit: tasks/TODO.md
 old_string: ## DONE
 new_string: ## DONE
 - [x] Implement Stripe integration (2025-12-08)
 ```
+
+**Note:** Always include surrounding context (like section headers) to ensure unique matches.
 
 ### Example: Creating Session Notes (Step 4)
 

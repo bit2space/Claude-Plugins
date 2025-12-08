@@ -174,27 +174,22 @@ new_string: {"id": "FEAT-003", "status": "in-progress"
 
 ### Example: Completing a Feature
 
-**Step 1 - Change status:**
+**Single Edit (include feature ID for safety):**
 ```
 Edit: features.json
-old_string: "status": "in-progress"
-new_string: "status": "done"
+old_string: {"id": "FEAT-006", "status": "in-progress", "passes": false
+new_string: {"id": "FEAT-006", "status": "done", "passes": true, "completed_at": "2025-12-08"
 ```
 
-**Step 2 - Mark tests passed:**
-```
-Edit: features.json
-old_string: "passes": false
-new_string: "passes": true, "completed_at": "2025-12-08"
-```
+**Why include feature ID:** Generic matches like `"status": "in-progress"` could match the wrong feature if multiple exist in the file.
 
 ### Example: Marking Feature as Blocked
 
-**Edit Call:**
+**Edit Call (include feature ID):**
 ```
 Edit: features.json
-old_string: "status": "in-progress", "passes": false, "notes": ""
-new_string: "status": "blocked", "passes": false, "notes": "Waiting for API credentials from client"
+old_string: {"id": "FEAT-006", "status": "in-progress", "passes": false, "notes": ""
+new_string: {"id": "FEAT-006", "status": "blocked", "passes": false, "notes": "Waiting for API credentials from client"
 ```
 
 ### Example: Checkpoint Commit Message

@@ -361,12 +361,17 @@ AskUserQuestion: {
 
 ### Example: Glob for Project Structure
 
-**Tool Call:**
+**Tool Call (check for known project directories):**
 ```
-Glob: **/
+Glob: {docs,src,tests,tasks,research,experiments,archive,reference,.github}
 ```
 
-**Use to identify directories:** `docs/`, `src/`, `tests/`, `tasks/`, `research/`
+**Expected Result:** Returns list of directories that exist, e.g., `[docs, src, tests]`
+
+**Use to identify project template:**
+- Template 1 (Documentation): `docs/`, `reference/`, `tasks/`, `archive/`
+- Template 2 (Development): `src/`, `tests/`, `docs/`, `.github/`
+- Template 3 (Research): `research/`, `experiments/`
 
 ---
 
