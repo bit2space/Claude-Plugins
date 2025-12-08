@@ -35,17 +35,22 @@ if [ -f "features.json" ]; then
     # Show current in-progress feature (if any)
     if [ "$IN_PROGRESS" -gt 0 ]; then
         # Extract first in-progress feature ID and description
-        # Using awk for portable parsing
-        CURRENT=$(awk '
-            /"status": "in-progress"/ { found=1 }
-            found && /"id":/ { gsub(/[",]/, "", $2); id=$2 }
-            found && /"description":/ {
-                gsub(/^[^"]*"description": "/, "");
-                gsub(/".*$/, "");
-                print "→ [" id "] " $0;
-                exit
-            }
-        ' features.json 2>/dev/null)
+        # Prefer jq if available (more robust), fallback to awk
+        if command -v jq &>/dev/null; then
+            CURRENT=$(jq -r '.features[] | select(.status=="in-progress") | "→ [\(.id)] \(.description)"' features.json 2>/dev/null | head -1)
+        else
+            # Fallback: awk for portable parsing (may fail on minified JSON)
+            CURRENT=$(awk '
+                /"status": "in-progress"/ { found=1 }
+                found && /"id":/ { gsub(/[",]/, "", $2); id=$2 }
+                found && /"description":/ {
+                    gsub(/^[^"]*"description": "/, "");
+                    gsub(/".*$/, "");
+                    print "→ [" id "] " $0;
+                    exit
+                }
+            ' features.json 2>/dev/null)
+        fi
 
         if [ -n "$CURRENT" ]; then
             echo "  $CURRENT"

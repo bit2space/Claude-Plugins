@@ -1,6 +1,6 @@
 # Project Starter Plugin
 
-**Version:** 1.2.0
+**Version:** 1.4.0
 **Author:** Kamil Grabowski
 
 Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps.
@@ -279,11 +279,16 @@ Additional features:
 ```
 project-starter/
 ├── .claude-plugin/
-│   └── plugin.json          # Plugin manifest
+│   └── plugin.json          # Plugin manifest (version, hooks)
 ├── commands/
 │   ├── start.md             # /start - full interactive session startup
 │   ├── end.md               # /end - session wrap-up and notes
-│   └── status.md            # /status - quick read-only status
+│   ├── status.md            # /status - quick read-only status
+│   └── init-features.md     # /init-features - initialize features.json
+├── agents/
+│   └── feature-initializer.md  # Agent for analyzing project features
+├── hooks/
+│   └── session-start.sh     # SessionStart hook for auto-context
 └── README.md                # This file
 ```
 
@@ -295,6 +300,30 @@ The command uses these tools (configured in frontmatter):
 - `Glob` - For discovering project structure
 - `Grep` - For searching file contents
 - `AskUserQuestion` - For interactive decision making
+
+## TODO.md Format
+
+This plugin expects TODO.md to use the following format:
+
+```markdown
+# Project Tasks
+
+## IN-PROGRESS
+- [-] Task currently being worked on
+
+## TODO
+- [ ] Pending task
+
+## DONE
+- [x] Completed task (2025-01-15)
+```
+
+**Checkbox patterns:**
+- `- [ ]` — Pending/TODO task
+- `- [-]` — In-progress task (optional, can also use section-based)
+- `- [x]` — Completed task
+
+The SessionStart hook counts these patterns to show task status. Both checkbox-based and section-based detection are supported.
 
 ## User's Project Templates
 
@@ -339,5 +368,5 @@ For issues or questions, contact: kamil@royalco.io
 
 ---
 
-**Last updated:** 2025-11-25
+**Last updated:** 2025-12-08
 **Plugin location:** `~/Projects/Claude Plugins/plugins/project-starter/`

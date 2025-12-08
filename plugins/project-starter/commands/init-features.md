@@ -72,7 +72,7 @@ Prompt: |
   Generate a comprehensive features.json with 10-50 atomic, testable features.
   Write the file to ./features.json in the project root.
 
-Subagent type: feature-dev:code-architect
+Subagent type: project-starter:feature-initializer
 ```
 
 ### Step 5: Review and Confirm
