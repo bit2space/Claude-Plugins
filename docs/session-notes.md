@@ -1,44 +1,49 @@
-# Session Notes
+# Session Notes - Claude Plugins
 
-This file is updated by `/project-starter:end` to capture context between sessions.
+## 2025-12-08 - Session End
+
+### What Was Accomplished
+
+Implemented Anthropic's Advanced Tool Use patterns from their engineering blog:
+
+1. **Tool Call Examples** - Added concrete tool invocations with expected outputs to all commands (start.md, end.md, status.md) and feature-tracking skill
+2. **Context Budget Guidelines** - Added explicit rules for handling large outputs and result summarization
+3. **Code Review Fixes** - Fixed Edit patterns to include feature IDs, corrected Glob syntax, clarified TODO.md editing
+4. **PROGRESS.md Scratchpad Pattern** - Implemented Anthropic's live working scratchpad recommendation
+
+### Commits Made
+
+- `79038f8` feat: Add Tool Call Examples and Context Budget Guidelines
+- `1c1a959` fix: Improve Edit patterns and Glob syntax in tool examples
+- `4de2abf` feat: Add PROGRESS.md live scratchpad pattern
+
+### Files Modified
+
+**Commands:**
+- plugins/project-starter/commands/start.md (+141 lines)
+- plugins/project-starter/commands/end.md (+167 lines)
+- plugins/project-starter/commands/status.md (+68 lines)
+
+**Skills:**
+- plugins/agent-harness/skills/feature-tracking/SKILL.md (+98 lines)
+- plugins/agent-harness/skills/progress-tracking/SKILL.md (NEW - 134 lines)
+
+### Key Patterns Added
+
+| Pattern | Source | Impact |
+|---------|--------|--------|
+| Tool Use Examples | Advanced Tool Use | 72% → 90% accuracy |
+| Context Budget | Advanced Tool Use | Prevents bloat |
+| PROGRESS.md | Claude Code Best Practices | Live context bridge |
+
+### Reference Saved
+
+- `/Users/kamil/memories/anthropic-advanced-tool-use.md` - Key concepts from the article
+
+### Next Steps
+
+- Test the new PROGRESS.md flow with `/project-starter:start`
+- Consider adding `/project-starter:quick` for fast start without questions
+- Update plugin versions and run `/plugin update`
 
 ---
-
-## 2025-11-25
-
-**Session focus**: Memory system explanation and project setup
-
-**What was done**:
-- Explained Claude Code's memory system (4-tier hierarchy)
-- Reviewed currently loaded memories (user + project CLAUDE.md)
-- Created TODO.md and docs/session-notes.md for better context persistence
-
-**Key decisions**:
-- TODO.md lives at project root (not `tasks/TODO.md`)
-- Session notes go to `docs/session-notes.md`
-- Future ideas from CLAUDE.md moved to TODO.md for tracking
-
-**Next session**:
-- Continue with any of the TODO items (quick start, deep start, memory prompt)
-
----
-
-## 2025-11-25 (Session 2)
-
-**Session focus**: Memory system documentation completed
-
-**What was done**:
-- Deep dive explanation of Claude Code's memory system
-- Documented 4-tier hierarchy (Enterprise → Project → User → Local)
-- Showed user interaction methods (`#`, `/memory`, `/init`, `@imports`)
-- Tested `/project-starter:status` with new TODO.md - now shows task counts
-
-**Completed tasks**:
-- [x] Document memory system improvements for project-starter
-
-**Next session**:
-- User will decide which TODO item to tackle next:
-  - `/project-starter:quick` - fast start without questions
-  - `/project-starter:deep` - include memory search
-  - Memory prompt in `/end` - "Save to ~/memories?"
-  - SessionStart hooks for auto-loading
