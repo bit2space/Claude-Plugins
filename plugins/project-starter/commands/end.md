@@ -33,6 +33,59 @@ First, analyze what was done during this session:
 
 Run these checks efficiently (combine in parallel where possible).
 
+### Step 1.5: Check for Missing Files (Offer to Create)
+
+After gathering data, check which tracking files are missing and offer to create them:
+
+1. **Check which files exist:**
+   - Use Glob to find: `PROGRESS.md`, `features.json`, `CLAUDE.md`
+   - Track which are missing
+
+2. **For each missing file, ask user if they want to create it:**
+
+   **If no PROGRESS.md:**
+   ```
+   AskUserQuestion:
+   Question: "No PROGRESS.md found. Would you like to create one for future sessions?"
+   Options:
+   1. "Yes, create PROGRESS.md" - "Initialize with current session summary"
+   2. "No, use session-notes.md" - "Fall back to docs/session-notes.md"
+   ```
+   If yes: Will create PROGRESS.md in Step 4 with session summary
+
+   **If no features.json:**
+   ```
+   AskUserQuestion:
+   Question: "No features.json found. Feature tracking helps link work across sessions. Set it up?"
+   Options:
+   1. "Yes, initialize features" - "Run /init-features after this session ends"
+   2. "No, skip" - "Continue without feature tracking"
+   ```
+   If yes: Remind user at end to run `/project-starter:init-features`
+
+   **If no CLAUDE.md:**
+   ```
+   AskUserQuestion:
+   Question: "No CLAUDE.md found. This file stores project status and goals. Create one?"
+   Options:
+   1. "Yes, create CLAUDE.md" - "Create with basic template (Status, Last Updated, Priority)"
+   2. "No, skip" - "Continue without project config"
+   ```
+   If yes: Create CLAUDE.md with template:
+   ```markdown
+   # [Project Name]
+
+   **Status**: in-progress
+   **Last Updated**: [today's date YYYY-MM-DD]
+   **Priority**: medium
+
+   ## Project Goal
+
+   [To be filled in]
+   ```
+
+**Note:** Group all missing file prompts together in one interaction if multiple files are missing. Don't ask about each file separately.
+
 ### Step 2: Present Session Summary
 
 Show the user what happened during this session:
@@ -60,36 +113,6 @@ FEATURE STATUS:
 ─────────────────────────────────────────────────
 ```
 
-### Step 2.5: Handle PROGRESS.md (if exists)
-
-Check for PROGRESS.md in project root:
-
-1. **If PROGRESS.md exists:**
-   - Read its contents
-   - Show summary of completed vs remaining items:
-     ```
-     PROGRESS.md STATUS:
-     ✓ 3/5 checklist items completed
-     Remaining: Step 4, Step 5
-     ```
-
-2. **Ask user what to do:**
-   - Use AskUserQuestion:
-     - Question: "What would you like to do with PROGRESS.md?"
-     - Options:
-       1. "Archive to session notes" - Merge completed items into docs/session-notes.md
-       2. "Keep for next session" - Leave PROGRESS.md as-is
-       3. "Delete" - Remove PROGRESS.md (task complete or abandoned)
-
-3. **If archiving:**
-   - Append PROGRESS.md content to docs/session-notes.md under today's date
-   - Delete PROGRESS.md after archiving
-   - Confirm: "✓ Progress archived to docs/session-notes.md"
-
-4. **If keeping:**
-   - Leave file untouched
-   - Remind: "PROGRESS.md kept for next session"
-
 ### Step 3: Update TODO.md (if exists)
 
 **If TODO.md exists:**
@@ -104,8 +127,15 @@ Check for PROGRESS.md in project root:
 
 3. **If user selects tasks to complete:**
    - Read the TODO.md file
+   - **Try to match each task to a feature** (if features.json exists):
+     - For each completed task, search features.json for matching feature
+     - Check if task description is substring of feature description (case-insensitive)
+     - Check if feature description is substring of task description
+     - If match found, append feature ID to the task
    - Move selected tasks from TODO or IN-PROGRESS sections to DONE section
-   - Add completion date: `- [x] Task description (YYYY-MM-DD)`
+   - Add completion date with optional feature ID:
+     - With match: `- [x] Implement Stripe integration [FEAT-002] (YYYY-MM-DD)`
+     - Without match: `- [x] Write unit tests (YYYY-MM-DD)`
    - Use Edit tool to update the file
    - Confirm: "✓ Updated TODO.md: moved N tasks to DONE"
 
@@ -147,42 +177,158 @@ Check for PROGRESS.md in project root:
    ─────────────────────────────────────────────────
    ```
 
-5. **If there are still in-progress features:**
+5. **Try to match completed features to TODO tasks** (if TODO.md exists):
+   - For each completed feature, search TODO.md DONE section for matching task
+   - Use same bidirectional substring matching as Step 3 (case-insensitive)
+   - If match found: Note the linkage for Step 4 session summary
+   - If no match found: Flag for Step 5.5 consistency validation
+
+6. **If there are still in-progress features:**
    - Ask: "You have [FEAT-XXX] still in progress. Add a note about current state?"
    - If yes: Update the feature's `notes` field in features.json
 
-### Step 4: Save Session Notes
+### Step 3.75: Update CLAUDE.md Status (if exists)
 
-Offer to save session notes for next time:
+**If CLAUDE.md exists and has a Status field:**
+
+1. **Read current status** from CLAUDE.md header
+   - Look for pattern: `**Status**: [value]`
+   - Common values: `planning`, `in-progress`, `blocked`, `completed`, `paused`
+
+2. **Ask user if status should change:**
+   ```
+   AskUserQuestion:
+   Question: "Project status is '[current status]'. Would you like to update it?"
+   Options:
+   1. "Keep as [current]" - "No change needed"
+   2. "Mark as completed" - "Project finished"
+   3. "Mark as blocked" - "Stuck on something"
+   4. "Mark as paused" - "Taking a break"
+   ```
+
+3. **If user changes status:**
+   - Use Edit tool to update Status field in CLAUDE.md
+   - Always update `**Last Updated**: YYYY-MM-DD` to today's date
+   - Confirm: "✓ CLAUDE.md status updated to [new status]"
+
+**Edit pattern for CLAUDE.md:**
+```
+Edit: CLAUDE.md
+old_string: **Status**: in-progress
+**Last Updated**: 2025-12-01
+new_string: **Status**: completed
+**Last Updated**: 2025-12-09
+```
+
+**Note:** Include both Status and Last Updated lines together to ensure unique match.
+
+### Step 4: Update PROGRESS.md (Unified Session Document)
+
+PROGRESS.md is the unified working document. Ask user what to do with it FIRST, then update accordingly.
+
+**If PROGRESS.md exists:**
+
+1. **Read current PROGRESS.md contents**
+   - Count completed vs remaining checklist items
+   - Show summary:
+     ```
+     PROGRESS.md STATUS:
+     ✓ 3/5 checklist items completed
+     Remaining: Step 4, Step 5
+     ```
+
+2. **Ask user what to do with PROGRESS.md FIRST:**
+   ```
+   AskUserQuestion:
+   Question: "What would you like to do with PROGRESS.md?"
+   Options:
+   1. "Keep for next session" - "Continue working - append session summary"
+   2. "Archive and delete" - "Task complete - archive to session-notes.md"
+   3. "Delete without archiving" - "Abandon task - discard without saving"
+   ```
+
+3. **Based on user choice:**
+
+   **If "Keep for next session":**
+   - Append session summary to PROGRESS.md:
+     ```markdown
+     ## Session: YYYY-MM-DD
+
+     ### Completed This Session
+     - [FEAT-002] Implement Stripe integration (passes: true)
+     - Fixed typo in README (no feature)
+
+     ### Files Modified
+     - src/api/payments.ts
+     - src/auth/middleware.ts
+
+     ### Notes
+     [User's input about session]
+     ```
+   - Include feature IDs from completed tasks/features (from Steps 3 and 3.5)
+   - Confirm: "✓ PROGRESS.md updated with session summary"
+
+   **If "Archive and delete":**
+   - First append session summary to PROGRESS.md (same format as above)
+   - Then append entire PROGRESS.md content to `docs/session-notes.md` under today's date
+   - Delete PROGRESS.md after archiving
+   - Confirm: "✓ Progress archived to docs/session-notes.md, PROGRESS.md deleted"
+
+   **If "Delete without archiving":**
+   - Delete PROGRESS.md without appending session data
+   - Confirm: "✓ PROGRESS.md deleted (session data not saved)"
+   - Note: Session summary will be saved to session-notes.md in Step 4.5 fallback
+
+**If PROGRESS.md doesn't exist but user chose to create one in Step 1.5:**
+
+Create new PROGRESS.md with session summary:
+```markdown
+# Progress: [Task from session]
+
+**Started:** YYYY-MM-DD
+**Status:** 🔄 In Progress
+
+## Session: YYYY-MM-DD
+
+### Completed This Session
+- [List completed items with feature IDs]
+
+### Files Modified
+- [List from git diff]
+
+### Notes
+[User's session notes]
+```
+
+### Step 4.5: Save Session Notes (Fallback)
+
+**Only if PROGRESS.md doesn't exist and user didn't want to create one:**
+
+Offer to save session notes to `docs/session-notes.md`:
 
 1. **Ask: "Would you like to save session notes?"**
    - Options:
-     - "Yes, save notes" - "Create session notes with what was accomplished and next steps"
+     - "Yes, save notes" - "Create session notes with what was accomplished"
      - "No, skip" - "End session without saving notes"
 
 2. **If user chooses to save notes:**
 
-   Create/update `docs/session-notes.md` in the project directory (create `docs/` directory if it doesn't exist):
+   Create/update `docs/session-notes.md` (create `docs/` directory if needed):
 
    ```markdown
    # Session Notes - [Project Name]
 
-   ## [Date] - Session End
+   ## YYYY-MM-DD - Session End
 
    ### What Was Accomplished
-   [Brief summary based on git changes and completed tasks]
+   - [FEAT-XXX] Feature description (if features.json exists)
+   - [Brief summary based on git changes]
 
    ### Files Modified
    - [List files from git diff]
 
    ### Completed Tasks
-   - [List tasks marked as done]
-
-   ### Current State
-   [User's input about current state]
-
-   ### Blockers / Issues
-   [User's input about any blockers]
+   - [List tasks marked as done with feature IDs]
 
    ### Next Steps
    [User's input about what to do next]
@@ -190,12 +336,7 @@ Offer to save session notes for next time:
    ---
    ```
 
-   Ask user to provide:
-   - Brief description of what was accomplished
-   - Any blockers or issues encountered
-   - What should be worked on next session
-
-   Use Write or Edit to save the file.
+   Note: "Consider using /project-starter:start next time for PROGRESS.md tracking"
 
 ### Step 5: Suggest Next Session Start
 
@@ -210,6 +351,40 @@ Based on TODO.md status and session notes:
 3. **If TODO.md doesn't exist or is empty:**
    - "Next session: Use /project-starter:start to plan your next tasks"
 
+### Step 5.5: Validate Cross-File Consistency
+
+**If both TODO.md and features.json exist:**
+
+Check for consistency between the two tracking systems:
+
+1. **Check completed features have corresponding DONE tasks:**
+   - For each feature marked `"status": "done"` in features.json
+   - Search TODO.md DONE section for matching task (substring match)
+   - Flag if feature is done but no matching TODO found
+
+2. **Check IN-PROGRESS tasks have matching in-progress features:**
+   - For each task in TODO.md IN-PROGRESS section
+   - Search features.json for feature with `"status": "in-progress"` and matching description
+   - Flag if task is in-progress but no matching feature found
+
+3. **If mismatches found, show warning:**
+   ```
+   ⚠ Consistency Warning:
+   - [FEAT-002] marked done but no matching TODO found
+   - TODO "Write tests" in-progress but no feature tracks it
+   ```
+
+4. **Offer to fix (optional):**
+   ```
+   AskUserQuestion:
+   Question: "Would you like to sync these tracking files?"
+   Options:
+   1. "Yes, sync them" - "I'll help align TODO.md and features.json"
+   2. "No, ignore" - "Leave as-is, they're intentionally different"
+   ```
+
+**Note:** This is an opt-in warning only. Many projects intentionally have TODOs without features (small fixes) or features without TODOs (generated from /init-features). Don't require perfect sync.
+
 ### Step 6: Final Summary
 
 Show a final wrap-up message:
@@ -218,9 +393,11 @@ Show a final wrap-up message:
 ★ Session Complete ────────────────────────────
 
 SAVED:
-✓ TODO.md updated - [N] tasks completed
+✓ TODO.md updated - [N] tasks completed [FEAT-XXX, FEAT-YYY]
 ✓ features.json updated - [N] features completed
-✓ Session notes saved to docs/session-notes.md
+✓ CLAUDE.md status updated to [status]
+✓ PROGRESS.md updated with session summary
+  (or: ✓ Session notes saved to docs/session-notes.md)
 
 CURRENT STATUS:
 - TODO: [N] tasks
@@ -236,6 +413,9 @@ GIT STATUS:
 [N] uncommitted changes
 [Tip: Consider committing your work]
 
+REMINDERS:
+[If user chose to init features: Run /project-starter:init-features]
+
 ─────────────────────────────────────────────────
 
 Great work! Use /project-starter:start when you're ready to begin your next session.
@@ -243,12 +423,14 @@ Great work! Use /project-starter:start when you're ready to begin your next sess
 
 ## Important Guidelines
 
-1. **Non-destructive**: Always ask before modifying TODO.md or creating files
-2. **Graceful degradation**: Work even if TODO.md doesn't exist
-3. **Be specific**: Use real data from git and files, not placeholders
-4. **Date format**: Use YYYY-MM-DD for consistency
-5. **Preserve structure**: When editing TODO.md, maintain the TODO/IN-PROGRESS/DONE sections
-6. **Session notes location**: Always save to `docs/session-notes.md` (canonical path)
+1. **Non-destructive**: Always ask before modifying files or creating new ones
+2. **Offer to create missing files**: Don't silently skip - ask user if they want to create PROGRESS.md, features.json, or CLAUDE.md
+3. **Feature ID cross-references**: Link TODO tasks to features using text matching when possible
+4. **PROGRESS.md is primary**: Use PROGRESS.md as the unified session document; session-notes.md is archive/fallback
+5. **Be specific**: Use real data from git and files, not placeholders
+6. **Date format**: Use YYYY-MM-DD for consistency
+7. **Preserve structure**: When editing TODO.md, maintain the TODO/IN-PROGRESS/DONE sections
+8. **Consistency validation**: Warn about mismatches between TODO.md and features.json but don't require sync
 
 ## Edge Cases
 
@@ -389,27 +571,46 @@ AskUserQuestion: {
 
 **Moving a task requires two edits:**
 
-**Step 1 - Remove from IN-PROGRESS (include enough context for unique match):**
+**Step 1 - Remove task from IN-PROGRESS (match the specific task line):**
 ```
 Edit: tasks/TODO.md
-old_string: ## IN-PROGRESS
-- [ ] Implement Stripe integration
-
-## TODO
-new_string: ## IN-PROGRESS
-
-## TODO
+old_string: - [ ] Implement Stripe integration
+new_string:
 ```
 
+**Why this works:** Removing just the task line is safer than trying to match section headers + task + next section. The task description itself should be unique enough. If multiple tasks have identical descriptions, include the checkbox and any distinguishing context.
+
 **Step 2 - Add to DONE section:**
+
+**Case A: DONE section is empty (no existing tasks):**
 ```
 Edit: tasks/TODO.md
 old_string: ## DONE
 new_string: ## DONE
-- [x] Implement Stripe integration (2025-12-08)
+- [x] Implement Stripe integration [FEAT-002] (2025-12-08)
 ```
 
-**Note:** Always include surrounding context (like section headers) to ensure unique matches.
+**Case B: DONE section has existing tasks (append after last task):**
+```
+Edit: tasks/TODO.md
+old_string: - [x] Previous task (2025-12-07)
+
+## ARCHIVE
+new_string: - [x] Previous task (2025-12-07)
+- [x] Implement Stripe integration [FEAT-002] (2025-12-08)
+
+## ARCHIVE
+```
+
+**Case C: DONE is last section (no section after it):**
+```
+Edit: tasks/TODO.md
+old_string: - [x] Previous task (2025-12-07)
+new_string: - [x] Previous task (2025-12-07)
+- [x] Implement Stripe integration [FEAT-002] (2025-12-08)
+```
+
+**Tip:** Read TODO.md structure first to determine which case applies. Use the last existing task in DONE as anchor for appending.
 
 ### Example: Creating Session Notes (Step 4)
 
