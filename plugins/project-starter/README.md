@@ -1,9 +1,12 @@
 # Project Starter Plugin
 
-**Version:** 1.4.0
+**Version:** 1.5.0
 **Author:** Kamil Grabowski
+**License:** MIT
 
 Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps.
+
+> Updated to Claude Code v2.1+ best practices with YAML-style frontmatter and Agent Skills standard.
 
 ## Overview
 
@@ -368,5 +371,5 @@ For issues or questions, contact: kamil@royalco.io
 
 ---
 
-**Last updated:** 2025-12-08
+**Last updated:** 2026-01-08
 **Plugin location:** `~/Projects/Claude Plugins/plugins/project-starter/`

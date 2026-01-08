@@ -1,6 +1,10 @@
 ---
 description: Use this agent to initialize features.json for a new project by analyzing project documentation and requirements
-allowed-tools: ["Read", "Glob", "Grep", "Write"]
+allowed-tools:
+  - Read
+  - Glob
+  - Grep
+  - Write
 ---
 
 # Feature Initializer Agent

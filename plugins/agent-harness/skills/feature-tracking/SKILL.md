@@ -1,3 +1,14 @@
+---
+name: feature-tracking
+description: Structured feature tracking with features.json for long-running agent tasks. Use when tracking atomic, testable features during development. Implements one-feature-at-a-time workflow with checkpoint commits.
+user-invocable: false
+allowed-tools:
+  - Read
+  - Edit
+  - Write
+  - Glob
+---
+
 # Feature Tracking Skill
 
 This skill provides structured feature tracking for long-running agent tasks, implementing patterns from "Effective Harnesses for Long-Running Agents".

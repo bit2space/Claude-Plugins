@@ -1,6 +1,12 @@
 ---
 description: Start project session - load context, show status, choose task
-allowed-tools: ["Bash", "Read", "Write", "Glob", "Grep", "AskUserQuestion"]
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Glob
+  - Grep
+  - AskUserQuestion
 argument-hint: "[task focus]"
 ---
 

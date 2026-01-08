@@ -1,18 +1,21 @@
 {
   "name": "project-starter",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Tools for starting and managing project sessions - intelligently loads project context, analyzes TODOs, proposes next steps",
   "author": {
     "name": "Kamil Grabowski",
     "email": "kamil@royalco.io"
   },
+  "repository": "https://github.com/bit2space/Claude-Plugins",
+  "license": "MIT",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh",
+            "once": true
           }
         ]
       }

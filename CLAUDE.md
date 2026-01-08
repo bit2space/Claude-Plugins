@@ -1,7 +1,7 @@
 # Claude Plugins Marketplace
 
 **Status**: in-progress
-**Last Updated**: 2025-12-10
+**Last Updated**: 2026-01-08
 **Priority**: medium
 
 ## Project Goal
@@ -18,7 +18,7 @@ Instead of relying on Claude's memory system, use **file-based state**:
 
 ## Plugins
 
-### project-starter (v1.4.0)
+### project-starter (v1.5.0)
 
 Session lifecycle management with four commands:
 
@@ -33,7 +33,7 @@ Session lifecycle management with four commands:
 - **SessionStart**: Auto-displays project context (git, features, todos) on session start
 - **PostToolUse**: Suggests checkpoint commits when features are completed
 
-### agent-harness (v1.0.0)
+### agent-harness (v1.1.0)
 
 Reusable components for long-running agent tasks (from [Anthropic's best practices](https://www.anthropic.com/engineering/claude-code-best-practices)):
 

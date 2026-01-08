@@ -1,3 +1,13 @@
+---
+name: progress-tracking
+description: Live working scratchpad pattern using PROGRESS.md. Use for complex multi-step tasks, long-running sessions, and work requiring context persistence. Update DURING work, not after.
+user-invocable: false
+allowed-tools:
+  - Read
+  - Edit
+  - Write
+---
+
 # Progress Tracking Skill
 
 Live working scratchpad pattern from [Anthropic's Claude Code Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices).

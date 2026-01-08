@@ -1,6 +1,12 @@
 ---
 description: Initialize features.json for feature tracking in the current project
-allowed-tools: ["Bash", "Read", "Write", "Glob", "AskUserQuestion", "Task"]
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Glob
+  - AskUserQuestion
+  - Task
 argument-hint: "[project description]"
 ---
 

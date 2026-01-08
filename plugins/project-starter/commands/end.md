@@ -1,6 +1,12 @@
 ---
 description: End project session - save notes, update TODOs, prepare for next time
-allowed-tools: ["Bash", "Read", "Write", "Edit", "Glob", "AskUserQuestion"]
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - AskUserQuestion
 argument-hint: "[session summary]"
 ---
 
