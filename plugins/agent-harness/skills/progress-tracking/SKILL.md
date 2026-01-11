@@ -13,6 +13,7 @@ allowed-tools:
 Live working scratchpad pattern from [Anthropic's Claude Code Best Practices](https://www.anthropic.com/engineering/claude-code-best-practices).
 
 > "improve performance by having Claude use a Markdown file as a checklist and working scratchpad"
+> 
 
 ## When to Use
 
